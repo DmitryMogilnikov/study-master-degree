@@ -1,0 +1,132 @@
+---
+title: "Лабораторная работа 3"
+author: "Могильников Дмитрий"
+date: "2022-11-19"
+output: html_document
+---
+
+## Задание 1
+### Найдите датасет для проведения корреляционного анализа, в котором должно быть не менее трех переменных, с которыми можно работать. Кратко опишите датасет. К отчету приложите файл с датасетом (если он встроенный, то не нужно).
+
+Загрузим датасет и выведем его через head()
+```{r set-options, cache=FALSE}
+options(width = 100)
+library("MASS")
+boston_df <- Boston
+
+head(boston_df)
+```
+Таблица с описанием для каждой переменной в проедставленном датасете:
+
+|Feature Variable|Description|
+|:-|:-------|
+|CRIM|per capita crime rate by town.|
+|ZN|proportion of residential land zoned for lots over 25,000 sq.ft.|
+|INDUS|proportion of non-retail business acres per town.|
+|CHAS|Charles River dummy variable (= 1 if tract bounds river; 0 otherwise).|
+|NOX|nitrogen oxides concentration (parts per 10 million).|
+|RM|average number of rooms per dwelling.|
+|AGE|proportion of owner-occupied units built prior to 1940.|
+|DIS|weighted mean of distances to five Boston employment centres.|
+|RAD|index of accessibility to radial highways.|
+|TAX|full-value property-tax rate per \$10,000.|
+|PTRATIO|pupil-teacher ratio by town.|
+|BLACK|1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town.|
+|LSTAT|lower status of the population (percent).|
+|MEDV|median value of owner-occupied homes in \$1000s.|
+
+
+## Задание 2
+### Проведите парный корреляционный анализ по двум переменным: постройте график рассеяния, найдите коэффициенты корреляции Пирсона, Спирмена и Кендала, а также проанализируйте статистическую значимость результатов(с помощью cor.test).
+
+#### Парный корреляционный анализ будем проводить по следующим двум переменным: RM(количество комнат в доме) и MEDV(медианная стоимость домов)
+```{r}
+library(ggplot2)
+attach(boston_df)
+# Посмотрим на законы распределения этих переменых
+ggplot(data = boston_df, aes(x = rm)) +
+  geom_histogram(fill = "orange", 
+                 color = "black") +
+  geom_vline(xintercept = median(rm), 
+             color = "red",
+             lty = 2)
+
+ggplot(data = boston_df, aes(x = medv)) +
+  geom_histogram(fill = "orange", 
+                 color = "black") + 
+  geom_vline(xintercept = median(medv), 
+             color = "red",
+             lty = 2)
+# Распределения близки к нормальным
+
+#Построим график рассеяния:
+ggplot(data = boston_df, aes(x = rm, y = medv)) + 
+  geom_point(size=0.75, color="blue") + 
+  labs(title="Стоимость от количества комнат в доме",
+       x="Количество комнат",
+       y="Стоимость дома") +
+  theme_bw()
+
+#Найдем коэффициенты корреляции и проанализируем статистическую значимость результатов
+#Пирсон:
+cor(x=rm, y=medv, method="pearson")
+cor.test(x=rm, y=medv, method = "pearson")
+#Спирман:
+cor(x=rm, y=medv, method="spearman")
+cor.test(x=rm, y=medv, method = "spearman")
+#Кендалл:
+cor(x=rm, y=medv, method="kendall")
+cor.test(x=rm, y=medv, method = "kendall")
+#Исходя из полученных данных, можем сделать вывод, что наилучшая корреляция достигается с использованием коэффициента Пирсона. Как видим, рассчитанные коэффициенты корреляции статистичетки значимо отличаются от нуля (p-value < 2.2e-16)
+```
+
+#### Рассмотрим корреляцию стоимости с еще одной переменной: CRIM(количество преступлений на душу населения) и MEDV(медианная стоимость домов)
+```{r}
+#Будем рассматривать на примере коэффициента корреляции Пирсона.
+ggplot(data = boston_df, aes(x = crim, y = medv)) + 
+  geom_point(size=0.75, color="blue") + 
+  labs(title="Стоимость дома от количества преступлений",
+       x="Количество преступлений",
+       y="Стоимость дома") +
+  theme_bw()
+
+cor.test(crim, medv)
+#Коэффициент кореляции между этими переменными не очень большой. Посмотрим на законы распределения этих переменых
+ggplot(data = boston_df, aes(x = crim)) +
+  geom_histogram(fill = "orange", 
+                 color = "black") +
+  geom_vline(xintercept = median(crim), 
+             color = "red",
+             lty = 2)
+
+ggplot(data = boston_df, aes(x = medv)) +
+  geom_histogram(fill = "orange", 
+                 color = "black") +
+  geom_vline(xintercept = median(medv), 
+             color = "red",
+             lty = 2)
+#Видим, что гистограмма преступлений не подчиняется нормальному распределению. Прологарифмируем эти данные и снова посмотрим на коэффициент корреляции
+crim_ln = log(crim+1)
+medv_ln = log(medv)
+
+ggplot(data = boston_df, aes(x = crim_ln, y = medv_ln)) + 
+  geom_point(size=0.75, color="blue") + 
+  labs(x="Логарифм количества преступлений",
+       y="Логарифм стоимости дома") +
+  theme_bw()
+
+cor.test(crim_ln, medv_ln)
+#После преобразования данных коэффициент корреляции стал выше почти в два раза. 
+```
+
+## Задание 3
+### Постройте корреляционную матрицу для всех переменных датасета (минимально трех).
+```{r, out.width="100%"}
+library(corrplot)
+
+corrplot(cor(boston_df),
+         method = "color",
+         addCoef.col = 1,
+         type="upper",
+         number.cex = 0.6)
+```

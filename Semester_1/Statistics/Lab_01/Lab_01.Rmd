@@ -1,0 +1,179 @@
+---
+title: "Лабораторная работа 1"
+author: "Могильников Дмитрий"
+date: "2022-11-10"
+output: html_document: default
+    pdf_document:
+        latex_engine: xelatex
+keep_tex: true        
+header-includes:
+   - \XeTeXdefaultencoding utf8
+   - \usepackage{xltxtra}
+   - \usepackage{fontspec}
+   - \setmainfont{Times New Roman}
+   - \setsansfont{Arial}
+   - \setmonofont{Courier New}
+   - \newfontfamily{\cyrillicfont}{Times New Roman}
+   - \newfontfamily{\cyrillicfonttt}{Courier New} 
+   - \newfontfamily{\cyrillicfontsf}{Arial} 
+   - \usepackage[english,russian]{babel}
+---
+
+### Для каждого задания:
+1. Вычислите для каждого набора основные описательные статистики: среднее, медиану, моду, дисперсию, стандартное отклонение.
+2. Постройте для каждого набора гистограммы с двумя разными интервалами разбиения, постройте графики функции плотности.
+
+# Задание 1
+### Смоделируйте три набора случайных данных объема 200, с нормальным распределением, параметры m и sd задайте самостоятельно
+
+```{r}
+#Создадим функцию для вычисления моды распределения:
+getmode <- function(v) {
+uniqv <- unique(v)
+uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+#Задаем нормальное распределение для трех наборов данных объемом 200:
+norm_dist1 <- rnorm(200, 5, 1) 
+norm_dist2 <- rnorm(200, 10, 10) 
+norm_dist3 <- rnorm(200, 0, 2) 
+
+#Вычислим среднее для первого распределения:
+mean(norm_dist1)
+
+#Вычислим медиану для первого распределения:
+median(norm_dist1)
+
+#Вычислим моду для первого распределения:
+getmode(norm_dist1) 
+
+#Вычислим дисперсию для первого распределения:
+var(norm_dist1)
+
+#Вычислим стандартное отклонение для первого распределения:
+sd(norm_dist1)
+
+#Построим гистограммы с двумя разными интервалами разбиения и графики функции плотности:
+#Строим гистограмму для первого распределения с разбиениями на 20 и 10 столбцов:
+hist(norm_dist1, breaks = 20, freq = 0) 
+lines(density(norm_dist1), lwd = 2, col = 'Red')
+hist(norm_dist1, breaks = 10, freq = 0)
+lines(density(norm_dist1), lwd = 2, col = 'Red')
+
+#Для получения параметров для второго и третьего распределения воспользуемся функцией summary:
+#Второе распределение
+summary(norm_dist2) 
+var(norm_dist2)
+sd(norm_dist2)
+getmode(norm_dist2)
+
+#Гистограммы с двумя разными интервалами разбиения (15, 8) и графики функции плотности для второго нормального распределения
+hist(norm_dist2, breaks = 15, freq = 0) 
+lines(density(norm_dist2), lwd = 2, col = 'Red')
+hist(norm_dist2, breaks = 8, freq = 0)
+lines(density(norm_dist2), lwd = 2, col = 'Red')
+
+#Третье распределение
+summary(norm_dist3) 
+var(norm_dist3)
+sd(norm_dist3)
+getmode(norm_dist3)
+
+#Гистограммы с двумя разными интервалами разбиения(25, 15) и графики функции плотности для третьего нормального распределения
+hist(norm_dist3, breaks = 25, freq = 0) 
+lines(density(norm_dist3), lwd = 2, col = 'Red')
+hist(norm_dist3, breaks = 15, freq = 0)
+lines(density(norm_dist3), lwd = 2, col = 'Red')
+```
+
+# Задание 2
+### Смоделируйте три набора случайных данных объема 200 с распределением Пуассона, параметр lambda задайте самостоятельно
+```{r}
+#задаем распределение Пуассона для трех наборов данных объемом 200:
+pois_dist1 <- rpois(200, 1)
+pois_dist2 <- rpois(200, 4)
+pois_dist3 <- rpois(200, 10)
+
+#Получим параметры распределения:
+#Для первого распределения
+summary(pois_dist1) 
+var(pois_dist1)
+sd(pois_dist1)
+getmode(pois_dist1)
+
+#Для второго распределения
+summary(pois_dist2) 
+var(pois_dist2)
+sd(pois_dist2)
+getmode(pois_dist2)
+
+#Для третьего распределения
+summary(pois_dist3) 
+var(pois_dist3)
+sd(pois_dist3)
+getmode(pois_dist3)
+
+#Для отображения двух гистограм на одном графике используем:
+par(mfrow = c(2, 1))
+
+#Строим гистограммы для распределений с разбиениями для первого (5, 10) для второго (6, 10) и третьего (8, 15) столбцов:
+hist(pois_dist1, breaks = 5, freq = 0) 
+lines(density(pois_dist1), lwd = 2, col = 'Red')
+hist(pois_dist1, breaks = 10, freq = 0)
+lines(density(pois_dist1), lwd = 2, col = 'Red')
+
+hist(pois_dist2, breaks = 6, freq = 0) 
+lines(density(pois_dist2), lwd = 2, col = 'Red')
+hist(pois_dist2, breaks = 10, freq = 0)
+lines(density(pois_dist2), lwd = 2, col = 'Red')
+
+hist(pois_dist3, breaks = 8, freq = 0) 
+lines(density(pois_dist3), lwd = 2, col = 'Red')
+hist(pois_dist3, breaks = 15, freq = 0)
+lines(density(pois_dist3), lwd = 2, col = 'Red')
+```
+
+# Задание 3
+### Смоделируйте три набора случайных данных объема 200 с биномиальным распределением, параметры size, prob задайте самостоятельно
+```{r}
+#задаем биномиальное распределение для трех наборов данных объемом 200:
+binom_dist1 <- rbinom(200, 20, 0.5)
+binom_dist2 <- rbinom(200, 20, 0.75)
+binom_dist3 <- rbinom(200, 40, 0.5)
+
+#Получим параметры распределения:
+#Для первого:
+summary(binom_dist1) 
+var(binom_dist1)
+sd(binom_dist1)
+getmode(binom_dist1)
+
+#Для второго:
+summary(binom_dist2) 
+var(binom_dist2)
+sd(binom_dist2)
+getmode(binom_dist2)
+
+#Для третьего:
+summary(binom_dist3) 
+var(binom_dist3)
+sd(binom_dist3)
+getmode(binom_dist3)
+
+#Строим гистограмму для распределений с разбиениями для первого (5, 10) для второго (10, 8) и третьего (8, 15) столбцов:
+
+hist(binom_dist1, breaks = 5, freq = 0) 
+lines(density(binom_dist1), lwd = 2, col = 'Red')
+hist(binom_dist1, breaks = 10, freq = 0)
+lines(density(binom_dist1), lwd = 2, col = 'Red')
+
+hist(binom_dist2, breaks = 6, freq = 0) 
+lines(density(binom_dist2), lwd = 2, col = 'Red')
+hist(binom_dist2, breaks = 10, freq = 0)
+lines(density(binom_dist2), lwd = 2, col = 'Red')
+
+hist(binom_dist3, breaks = 8, freq = 0) 
+lines(density(binom_dist3), lwd = 2, col = 'Red')
+hist(binom_dist3, breaks = 15, freq = 0)
+lines(density(binom_dist3), lwd = 2, col = 'Red')
+```
