@@ -1,0 +1,195 @@
+---
+title: "Lab_5"
+author: "Могильников Дмитрий"
+date: "2022-12-17"
+output: html_document
+---
+
+## Задание 1
+### Сформируйте датасет самостоятельно на основе погодных данных (например, с сайта rp5).
+
+
+С сайта rp5 были взяты данные города Нижневартовск за последние пять лет. Произведен парсинг этих данных в отдельный csv файл, в котором выделены два столбца:
+
+- Дата
+
+- Минимальная температура за сутки
+
+Загрузим полученный датасет:
+
+```{r set-options, cache=FALSE}
+options(width = 100)
+library(forecast)
+library(lubridate)
+
+df_min_temp <- read.csv('Nizhnevartovsk_min_temperature.csv', sep=',', header = TRUE)
+head(df_min_temp, 20)
+
+#Спарсим первую колонку в правильное значение даты
+df_min_temp$date <- as.Date(df_min_temp$date, "%Y-%m-%d")
+```
+
+## Задание 2
+### Создайте на основе датасета одномерный временной ряд. Выведите его на графике.
+
+```{r}
+#Сформируем time-series, начиная с 2017-11-17
+df_ts = ts(df_min_temp$min_temperature, 
+           frequency=365, 
+           start=decimal_date(ymd("2017-11-17")),
+)
+
+#Построим временной ряд:
+plot(df_ts) 
+# Видим, что наблюдается сезонная периодичность, что естественно
+
+#создадим переменную с датами
+time <- time(df_ts)
+
+#разделим на тестовую (15% ~270 элементов) и тестовую выборку
+n_test <- 270
+n_train <- length(df_ts) - n_test
+df_train <- window(df_ts, start=time[1], end=time[n_train])
+df_test <- window(df_ts, start=time[n_train+1], end=time[n_train+n_test])
+```
+
+## Задание 3
+### Смоделируйте ряд тремя разными методами на Ваш выбор (naïve, snaive, ar, ma, arima, ses и т.д.).
+```{r}
+# библиотека для проверки accuracy построенных моделей
+library(knitr)
+# Смоделируем наивную модель, h - сколько значений хотим предсказать(для сравнения с тестовой выборкой)
+df_naive <- naive(df_train, h=n_test)
+
+# Построим сезонную модель
+df_snaive <- snaive(df_train, h=n_test)
+
+# Рассчитаем accuracy для каждой модели
+acc_naive <- accuracy(df_naive, df_test)
+acc_snaive <- accuracy(df_snaive, df_test)
+
+# Воспользуемся методом ARIMA: для начала рассмотрим автоматическую регрессию
+df_ar <- arima(df_train, c(1,0,0))
+df_ar_res <-predict(df_ar, n.ahead=n_test)
+acc_ar <- accuracy(df_ar_res$pred, df_test)
+
+# Рассмотрим скользящее среднее
+df_ma <- arima(df_train, c(0,0,1))
+df_ma_res <-predict(df_ma, n.ahead=n_test)
+acc_ma <- accuracy(df_ma_res$pred, df_test)
+
+# Рассмотрим полную ARIMA
+df_arima <- arima(df_train, c(1,1,1))
+df_arima_res <-predict(df_arima, n.ahead=n_test)
+acc_arima <- accuracy(df_arima_res$pred, df_test)
+```
+
+## Задание 4
+### Оцените точность прогнозирования построенных моделей (размер обучающей и тестовой выборок на Ваш выбор). Выберите наилучших метод.
+```{r}
+# Сравним полученные результаты:
+# Наивная модель
+kable(acc_naive)
+# Сезонная модель
+kable(acc_snaive)
+# Авторегрессионная модель
+kable(acc_ar)
+# Скользящее среднее
+kable(acc_ma)
+# Полная ARIMA
+kable(acc_arima)
+
+
+plot(df_test, main="Forecast", xlab="Date", ylab="t_min")
+lines(df_naive$mean, col="yellow")
+lines(df_snaive$mean, col="red")
+lines(df_ar_res$pred, col="blue")
+lines(df_ma_res$pred, col="green")
+lines(df_arima_res$pred, col="purple")
+legend("topleft", 
+       legend=c("Наивная модель", "Сезонная модель", "Авторегрессионная модель", "Скользящее среднее", "ARIMA"),
+       col=c("yellow", "red", "blue", "green", "purple"), lty = 1:1, cex=0.5)
+```
+
+Исходя из полученных результатов, мы можем сделать вывод, что для прогнозирования погоды лучше всего подходит сезонная модель, это связанно с тем, что только она учитывает необходимые сезонные изменения. У остальных моделей показатели MAE и RMSE хуже, а также на графике видно, что для такого небольшого промежутка времени они все сходятся к константе. Сезонная модель же достаточно хорошо соотносится с тестовой выборкой.
+
+## Задание 5
+### Сформируйте дополнительный датасет на основе первого, возьмите данные только за определенный сезон (весна, лето, осень, зима) минимально за последние 5 лет.
+
+```{r}
+#Возьмем данные за лето, что поможет немного устранить сезонную компоненту.
+df_summer <- (subset(df_min_temp, month(df_min_temp$date)>5 & month(df_min_temp$date)<9))
+
+#Сформируем time-series, начиная с 2017-11-17
+df_summer_ts = ts(df_summer$min_temperature, 
+           frequency=92,
+           start = c(2018, 1)
+)
+
+#Построим временной ряд:
+plot(df_summer_ts) 
+# Видим, что наблюдается сезонная периодичность, что естественно
+
+#создадим переменную с датами
+time_summer <- time(df_summer_ts)
+
+#разделим на тестовую (15% ~60 элементов) и тестовую выборку
+n_test_summer <- 60
+n_train_summer <- length(df_summer_ts) - n_test_summer
+df_train_summer <- window(df_summer_ts, start=time_summer[1], end=time_summer[n_train_summer])
+df_test_summer <- window(df_summer_ts, start=time_summer[n_train_summer+1], end=time_summer[n_train_summer+n_test_summer])
+```
+
+## Задание 6
+### Те же пункты 2-4 ко второму датасету.
+```{r}
+# Смоделируем наивную модель, h - сколько значений хотим предсказать(для сравнения с тестовой выборкой)
+df_naive_summer <- naive(df_train_summer, h=n_test_summer)
+
+# Построим сезонную модель
+df_snaive_summer <- snaive(df_train_summer, h=n_test_summer)
+
+# Рассчитаем accuracy для каждой модели
+acc_naive_summer <- accuracy(df_naive_summer, df_test_summer)
+acc_snaive_summer <- accuracy(df_snaive_summer, df_test_summer)
+
+# Воспользуемся методом ARIMA: для начала рассмотрим автоматическую регрессию
+df_ar_summer <- arima(df_train_summer, c(1,0,0))
+df_ar_res_summer <-predict(df_ar_summer, n.ahead=n_test_summer)
+acc_ar_summer <- accuracy(df_ar_res_summer$pred, df_test_summer)
+
+# Рассмотрим скользящее среднее
+df_ma_summer <- arima(df_train_summer, c(0,0,1))
+df_ma_res_summer <-predict(df_ma_summer, n.ahead=n_test_summer)
+acc_ma_summer <- accuracy(df_ma_res_summer$pred, df_test_summer)
+
+# Рассмотрим полную ARIMA
+df_arima_summer <- arima(df_train_summer, c(1,1,1))
+df_arima_res_summer <-predict(df_arima_summer, n.ahead=n_test_summer)
+acc_arima_summer <- accuracy(df_arima_res_summer$pred, df_test_summer)
+
+# Сравним полученные результаты:
+# Наивная модель
+kable(acc_naive_summer)
+# Сезонная модель
+kable(acc_snaive_summer)
+# Авторегрессионная модель
+kable(acc_ar_summer)
+# Скользящее среднее
+kable(acc_ma_summer)
+# Полная ARIMA
+kable(acc_arima_summer)
+
+
+plot(df_test_summer, main="Forecast", xlab="Date", ylab="t_min")
+lines(df_naive_summer$mean, col="yellow")
+lines(df_snaive_summer$mean, col="red")
+lines(df_ar_res_summer$pred, col="blue")
+lines(df_ma_res_summer$pred, col="green")
+lines(df_arima_res_summer$pred, col="purple")
+legend("topleft", 
+       legend=c("Наивная модель", "Сезонная модель", "Авторегрессионная модель", "Скользящее среднее", "ARIMA"),
+       col=c("yellow", "red", "blue", "green", "purple"), lty = 1:1, cex=0.5)
+```
+
+Исходя из полученных результатов, мы можем сделать вывод, что наилучший результат прогнозирования погоды для одного сезона также дает сезонная модель. У остальных моделей показатели MAE и RMSE хуже, а также на графике видно, что для такого небольшого промежутка времени они все сходятся к константе. Сезонная модель же достаточно хорошо соотносится с тестовой выборкой.

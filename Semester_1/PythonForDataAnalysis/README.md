@@ -7,3 +7,11 @@
 5.  Реализация поддержки функций нескольких аргументов
 
 Реализация тестов для проверки каждого задания
+
+## [02. Numpy](https://github.com/DmitryMogilnikov/PythonForDataAnalysis/blob/main/02.%20Numpy.ipynb)
+Работа с библиотеками NumPy, SciPy, Numba, Cython 
+
+## [03. Pandas](https://github.com/DmitryMogilnikov/PythonForDataAnalysis/tree/main/03.%20Pandas)
+Работа с библиотеками Pandas, GeoPandas
+
+Анализ температурных данных по разным городам мира
