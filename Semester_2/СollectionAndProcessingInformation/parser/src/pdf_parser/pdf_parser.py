@@ -1,34 +1,27 @@
 import io
-from pathlib import Path
 
 from pdfminer.layout import LAParams
 from pdfminer.converter import TextConverter
 from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
-from src.utils.txt_writer import write_txt
+
+from src.abstract_parser.abstract_parser import AbstractParser
+from src.utils.path_checker import check_path
+from src.utils.txt_writer import write_txt, get_output_path
 
 
-class PDF_parser:
-    def __init__(self, pdf_path: str):
-        self.pdf_path = pdf_path
-        self.output_file_name = Path(self.pdf_path).stem
-        self.output_path: str = '../../files/outputs/'
+class ParserPDF(AbstractParser):
 
-    def check_path(self):
-        if not Path(self.pdf_path).is_file():
-            raise FileNotFoundError("Incorrect path to file")
-        if not Path(self.pdf_path).suffix == '.pdf':
-            raise TypeError("File has incorrect type")
-
+    @staticmethod
     def extract_all_text(
-            self,
+            path: str,
             caching: bool = True,
             codec: str = "utf-8",
     ):
-        self.check_path()
+        check_path(path, suffix='.pdf')
         laparams = LAParams()
 
-        with open(self.pdf_path, 'rb') as file:
+        with open(path, 'rb') as file:
             resource_manager = PDFResourceManager()
             output_string = io.StringIO()
             converter = TextConverter(
@@ -44,7 +37,7 @@ class PDF_parser:
             text = output_string.getvalue()
 
         if text:
-            write_txt(f'{self.output_path}/{self.output_file_name}.txt', text)
+            write_txt(get_output_path(path=path), text)
 
     def extract_images(self,):
         pass
