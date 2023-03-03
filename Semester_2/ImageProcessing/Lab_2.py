@@ -1,71 +1,48 @@
 import numpy as np
 
-def normal_scalar_prod(v1, v2):
+def scalar_prod(v1: np.ndarray, v2: np.ndarray) -> complex:
+    return np.vdot(v1, v2)
+
+def norm_vector(vector: np.ndarray) -> float:
+    return np.linalg.norm(vector)
+
+def normal_scalar_prod(v1: np.ndarray, v2: np.ndarray) -> complex:
     if len(v1) != len(v2):
-        print('Вектора разной длины!')
-        return
+        raise TypeError('Вектора разной длины!')
 
-    print(f'For vectors: \n {v1=}, \n {v2=}')
-    scalar_prod = np.vdot(v1, v2)
-    print(f'{scalar_prod=}')
+    return scalar_prod(v1, v2) / (norm_vector(v1) * norm_vector(v2)) 
 
-    norm_v1 = np.sqrt(sum(abs((v1))**2))
-    norm_v2 = np.sqrt(sum(abs((v2))**2))
+if __name__ == '__main__':
+    print('Рассмотрим первую ситуацию когда контуры совпадают:')
+    v1 = np.array([1, 1-1j, -1, -1, -1, 1+1j])
+    v2 = np.array([1, 1-1j, -1, -1, -1, 1+1j])
+    print(normal_scalar_prod(v1, v2))
 
-    print(f'{norm_v1=}\n{norm_v2=}')
+    print('\nРассмотрим вторую ситуацию когда контур повернут:')
+    v1 = np.array([-1j, -1-1j, 1j, 1j, 1j, 1-1j])
+    print(normal_scalar_prod(v1, v2))
 
-    n_scalar_prod = scalar_prod / (norm_v1 * norm_v2) 
-    return np.round(n_scalar_prod, 3)
+    print('\nРассмотрим третью ситуацию когда контур повернут:')
+    v1 = np.array([-1, -1+1j, 1, 1, 1, -1-1j])
+    print(normal_scalar_prod(v1, v2))
 
-def print_nsp_angle_and_abs(nsp):
-    print(f'{nsp=}')
-
-    nsp_angle = np.degrees(np.arccos(nsp.real))
-    print(f'{nsp_angle} grad')
-
-    nsp_abs = abs(nsp)
-    print(f'{nsp_abs=}')
+    print('\nРассмотрим четвертую ситуацию когда контур повернут:')
+    v1 = np.array([+1j, +1+1j, -1j, -1j, -1j, -1+1j])
+    print(normal_scalar_prod(v1, v2))
 
 
-print('Рассмотрим первую ситуацию когда контуры совпадают:')
-v1 = np.array([1, 1-1j, -1, -1, -1, 1+1j])
-v2 = np.array([1, 1-1j, -1, -1, -1, 1+1j])
-nsp = normal_scalar_prod(v1=v1, v2=v2)
-print_nsp_angle_and_abs(nsp=nsp)
+    print('\nЗадание 2\nПосчитаем оранжевые точки для разных фигур:')
+    v1_orange = np.array([1, 1+1j, 1-1j, 1, -1-1j, 1-1j, -1+1j,-1-1j, 1+1j, -1+1j])
+    v2_orange = np.array([1, 1, 1, -1j, -1j, -1,-1,-1, 1j, 1j])
+    print(normal_scalar_prod(v1_orange, v2_orange))
 
-print('\nРассмотрим вторую ситуацию когда контур повернут:')
-v1 = np.array([-1j, -1-1j, 1j, 1j, 1j, 1-1j])
-nsp = normal_scalar_prod(v1=v1, v2=v2)
-print_nsp_angle_and_abs(nsp=nsp)
+    print('\nПосчитаем зеленые точки для разных фигур:')
+    v1_green = np.array([-1+1j,-1-1j, 1+1j, -1+1j, 1, 1+1j, 1-1j, 1, -1-1j, 1-1j])
+    v2_green = np.array([-1,-1,-1, 1j, 1j, 1, 1, 1, -1j, -1j])
+    print(normal_scalar_prod(v1_green, v2_green))
 
-print('\nРассмотрим третью ситуацию когда контур повернут:')
-v1 = np.array([-1, -1+1j, 1, 1, 1, -1-1j])
-nsp = normal_scalar_prod(v1=v1, v2=v2)
-print_nsp_angle_and_abs(nsp=nsp)
+    print('\nПосчитаем разные точки для звезды:')
+    print(normal_scalar_prod(v1_orange, v1_green))
 
-print('\nРассмотрим четвертую ситуацию когда контур повернут:')
-v1 = np.array([+1j, +1+1j, -1j, -1j, -1j, -1+1j])
-nsp = normal_scalar_prod(v1=v1, v2=v2)
-print_nsp_angle_and_abs(nsp=nsp)
-
-
-print('\nЗадание 2\nПосчитаем оранжевые точки для разных фигур:')
-v1_orange = np.array([1, 1+1j, 1-1j, 1, -1-1j, 1-1j, -1+1j,-1-1j, 1+1j, -1+1j])
-v2_orange = np.array([1, 1, 1, -1j, -1j, -1,-1,-1, 1j, 1j])
-nsp = normal_scalar_prod(v1=v1_orange, v2=v2_orange)
-print_nsp_angle_and_abs(nsp=nsp)
-
-print('\nПосчитаем зеленые точки для разных фигур:')
-v1_green = np.array([-1+1j,-1-1j, 1+1j, -1+1j, 1, 1+1j, 1-1j, 1, -1-1j, 1-1j])
-v2_green = np.array([-1,-1,-1, 1j, 1, 1, 1, 1, -1j, -1j])
-nsp = normal_scalar_prod(v1=v1_green, v2=v2_green)
-print_nsp_angle_and_abs(nsp=nsp)
-
-print('\nПосчитаем разные точки для звезды:')
-nsp = normal_scalar_prod(v1=v1_orange, v2=v1_green)
-print_nsp_angle_and_abs(nsp=nsp)
-
-print('\nПосчитаем разные точки для прямоугольника:')
-nsp = normal_scalar_prod(v1=v2_orange, v2=v2_green)
-print_nsp_angle_and_abs(nsp=nsp)
-
+    print('\nПосчитаем разные точки для прямоугольника:')
+    print(normal_scalar_prod(v2_orange, v2_green))

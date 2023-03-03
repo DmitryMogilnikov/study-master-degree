@@ -635,6 +635,17 @@ tomli = {version = ">=1.0.0", markers = "python_version < \"3.11\""}
 testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "pygments (>=2.7.2)", "requests", "xmlschema"]
 
 [[package]]
+name = "python-djvulibre"
+version = "0.8.8"
+description = "Python support for the DjVu image format"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "python-djvulibre-0.8.8.tar.gz", hash = "sha256:ea8e4fe72d4f9e5c9ea64191ec99a75b35653263f3132e4d080f00ecd75d30ae"},
+]
+
+[[package]]
 name = "python-docx"
 version = "0.8.11"
 description = "Create and update Microsoft Word .docx files."
@@ -663,4 +674,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "705bee525dfb3aa91716423577e5024b32fe40784a561ebb6fa7c3058cadd0b2"
+content-hash = "09bc324bb33e07bdcc87fbbdc8266c0c67227368bc743a4a5e65943bc5dbdc01"

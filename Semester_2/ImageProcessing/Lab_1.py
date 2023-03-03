@@ -68,6 +68,7 @@ def convert_temperature_to_RGB(T_kelvin: float):
     return (r, g, b)
 
 
-print(convert_HSV_to_RGB(hue=300, saturation=1, value=1))
-print(convert_HSL_to_RGB(hue=120, saturation=1, lightness=0.5))
-print(convert_temperature_to_RGB(T_kelvin=8000))
+if __name__ == '__main__': 
+    print(convert_HSV_to_RGB(hue=300, saturation=1, value=1))
+    print(convert_HSL_to_RGB(hue=120, saturation=1, lightness=0.5))
+    print(convert_temperature_to_RGB(T_kelvin=8000))
