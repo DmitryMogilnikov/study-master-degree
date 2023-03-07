@@ -33,27 +33,22 @@ def haar_wavelet(v1: np.ndarray) -> np.ndarray:
         result[1, i // 2] = (ac_vector[i] - ac_vector[i+1]) / 2
     return result
 
-def equalize_large_vector(v1: np.ndarray, new_count) -> np.ndarray:
+def equalize_vector(v1: np.ndarray, new_count) -> np.ndarray:
     result = np.zeros(new_count, dtype=complex)
     count = v1.shape[0]
 
-    for i in range(count):
-        result[i * new_count // count] += v1[i]
-
-    return result
-
-def equalize_small_vector(v1: np.ndarray, new_count) -> np.ndarray:
-    result = np.zeros(new_count, dtype=complex)
-    count = v1.shape[0]
-    j = 0
-
-    for i in range(new_count):
-        idx = i * count / new_count
-        if j < count - 2:
+    if count > new_count:
+        for i in range(count):
+            result[i * new_count // count] += v1[i]
+    elif count < new_count:
+        for i in range(new_count):
+            idx = i * count / new_count
             j = int(idx)
-        k = idx - j
-        result[i] = v1[j] * (1 - k) + v1[j+1] * k 
-    
+            k = idx - j
+            result[i] = v1[j] * (1 - k) + v1[(j+1) % count] * k 
+    else:
+        result = v1
+
     return result
 
 
@@ -84,12 +79,9 @@ if __name__ == '__main__':
     print(f'{haar_wavelet(cross)}\n')
 
 
-    print('\n\n\n\nTask 2:')
+    print('\nTask 2:')
     print('Cross equalization:')
-    print(equalize_large_vector(cross, 12))
-    print('Star equalization:')
-    print(' '.join(map(str, equalize_small_vector(star, 12))))
-
-
+    print(equalize_vector(cross, 12))
+    print(equalize_vector(star, 20))
 
     #print(cross_correlation(v1, v2))
