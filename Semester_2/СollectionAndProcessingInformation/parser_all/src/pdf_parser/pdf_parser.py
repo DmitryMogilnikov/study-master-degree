@@ -7,19 +7,22 @@ from pdfminer.pdfpage import PDFPage
 
 from src.abstract_parser.abstract_parser import AbstractParser
 from src.utils.path_checker import check_path
-from src.utils.txt_writer import write_txt, get_output_path
 
 
 class ParserPDF(AbstractParser):
+    text: str = ''
+    path: str
 
-    @staticmethod
     def extract_all_text(
+            self,
             path: str,
             caching: bool = True,
             codec: str = "utf-8",
     ):
         check_path(path, suffix='.pdf')
         laparams = LAParams()
+
+        self.path = path
 
         with open(path, 'rb') as file:
             resource_manager = PDFResourceManager()
@@ -34,10 +37,7 @@ class ParserPDF(AbstractParser):
 
             for page in PDFPage.get_pages(file, caching=caching):
                 interpreter.process_page(page)
-            text = output_string.getvalue()
+            self.text = output_string.getvalue()
 
-        if text:
-            write_txt(get_output_path(path=path), text)
-
-    def extract_images(self,):
-        pass
+        if self.text:
+            return self.text

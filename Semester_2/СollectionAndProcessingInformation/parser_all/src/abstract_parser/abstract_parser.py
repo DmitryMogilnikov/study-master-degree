@@ -2,8 +2,9 @@ from abc import ABC, abstractmethod
 
 
 class AbstractParser(ABC):
+    text: str
+    path: str
 
-    @staticmethod
     @abstractmethod
-    def extract_all_text(path, ):
+    def extract_all_text(self, path, ):
         pass
