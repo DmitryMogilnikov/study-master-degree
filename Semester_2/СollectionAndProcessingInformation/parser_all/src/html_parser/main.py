@@ -1,7 +1,9 @@
 from html_parser import ParserHTML
+from src.utils.txt_writer import write_txt
 
 if __name__ == '__main__':
-    html_path = input('File path to parse:')
-    html_parser = ParserHTML()
+    path = input('File path to parse:')
+    html_parser = ParserHTML(path)
 
-    pdf_parser.extract_all_text(html_path)
+    html_parser.extract_all_text()
+    write_txt(html_parser)

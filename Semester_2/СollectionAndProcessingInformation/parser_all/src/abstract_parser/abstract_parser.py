@@ -6,5 +6,5 @@ class AbstractParser(ABC):
     path: str
 
     @abstractmethod
-    def extract_all_text(self, path, ):
+    def extract_all_text(self):
         pass

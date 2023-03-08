@@ -114,6 +114,17 @@ pycodestyle = ">=2.10.0,<2.11.0"
 pyflakes = ">=3.0.0,<3.1.0"
 
 [[package]]
+name = "httplib2"
+version = "0.21.0"
+description = "A comprehensive HTTP client library."
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+
+[package.dependencies]
+pyparsing = {version = ">=2.4.2,<3.0.0 || >3.0.0,<3.0.1 || >3.0.1,<3.0.2 || >3.0.2,<3.0.3 || >3.0.3,<4", markers = "python_version > \"3.0\""}
+
+[[package]]
 name = "iniconfig"
 version = "2.0.0"
 description = "brain-dead simple config-ini parsing"
@@ -231,6 +242,17 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
+name = "pyparsing"
+version = "3.0.9"
+description = "pyparsing module - Classes and methods to define and execute parsing grammars"
+category = "main"
+optional = false
+python-versions = ">=3.6.8"
+
+[package.extras]
+diagrams = ["railroad-diagrams", "jinja2"]
+
+[[package]]
 name = "pytest"
 version = "7.2.2"
 description = "pytest: simple powerful testing with Python"
@@ -280,7 +302,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "cc848c0650c654f8773d4e39cc9ee5db9a119fe09681e56f777f408089dfcda4"
+content-hash = "bcb259a837e38e86b5adabc84db66e2e06bb6eed91c432ce4338457cefdf00f3"
 
 [metadata.files]
 attrs = []
@@ -292,6 +314,7 @@ cryptography = []
 docx = []
 exceptiongroup = []
 flake8 = []
+httplib2 = []
 iniconfig = []
 isort = []
 lxml = []
@@ -303,6 +326,7 @@ pluggy = []
 pycodestyle = []
 pycparser = []
 pyflakes = []
+pyparsing = []
 pytest = []
 python-docx = []
 soupsieve = []

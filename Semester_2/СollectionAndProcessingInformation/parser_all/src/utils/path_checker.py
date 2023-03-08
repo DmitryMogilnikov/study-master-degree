@@ -1,8 +1,9 @@
 from pathlib import Path
+from typing import Union
 
 
-def check_path(path, suffix):
+def check_path(path: str, suffix: Union[str, list]):
     if not Path(path).is_file():
         raise FileNotFoundError("Incorrect path to file")
-    if not Path(path).suffix == suffix:
+    if Path(path).suffix not in suffix:
         raise TypeError("File has incorrect type")

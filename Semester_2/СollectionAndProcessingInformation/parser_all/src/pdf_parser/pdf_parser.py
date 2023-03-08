@@ -11,20 +11,19 @@ from src.utils.path_checker import check_path
 
 class ParserPDF(AbstractParser):
     text: str = ''
-    path: str
+
+    def __init__(self, path: str):
+        check_path(path, suffix='.pdf')
+        self.path = path
 
     def extract_all_text(
             self,
-            path: str,
             caching: bool = True,
             codec: str = "utf-8",
-    ):
-        check_path(path, suffix='.pdf')
+    ) -> str:
         laparams = LAParams()
 
-        self.path = path
-
-        with open(path, 'rb') as file:
+        with open(self.path, 'rb') as file:
             resource_manager = PDFResourceManager()
             output_string = io.StringIO()
             converter = TextConverter(
