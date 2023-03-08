@@ -7,3 +7,6 @@ if __name__ == '__main__':
 
     html_parser.extract_all_text()
     write_txt(html_parser)
+
+    html_parser.extract_all_links()
+    write_txt(html_parser, "../../files/outputs/test_links.txt")

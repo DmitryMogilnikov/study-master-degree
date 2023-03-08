@@ -16,7 +16,10 @@ class ParserDOCX(AbstractParser):
         document = docx.Document(self.path)
         self.text = '\n'.join(par.text for par in document.paragraphs)
         self.text = '\n'.join(
-            line.strip() for line in re.findall(r'.{1,100}(?:\s+|$)', self.text)
+            line.strip() for line in re.findall(
+                r'.{1,100}(?:\s+|$)',
+                self.text
+            )
         )
 
         if self.text:
