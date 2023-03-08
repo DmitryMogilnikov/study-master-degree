@@ -13,8 +13,8 @@ docx = "^0.2.4"
 "pdfminer.six" = "^20191110"
 python-docx = "^0.8.11"
 beautifulsoup4 = "^4.8.0"
-httplib2 = "^0.21.0"
 textract = "^1.6.5"
+python-djvulibre = "^0.8.8"
 
 [tool.poetry.dev-dependencies]
 
