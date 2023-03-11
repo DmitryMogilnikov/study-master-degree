@@ -1,6 +1,9 @@
+import os
+
 from pathlib import Path
 from typing import Optional
 
+from env import ROOT_DIR
 from src.abstract_parser.abstract_parser import AbstractParser
 
 
@@ -15,6 +18,9 @@ def write_txt(
 
 
 def get_output_path(path: str) -> str:
+    output_path = f"{ROOT_DIR}/files/outputs/"
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
     output_file_name = Path(path).stem
-    output_path = '../../files/outputs/'
-    return f'{output_path}/{output_file_name}.txt'
+    return f'{output_path}{output_file_name}.txt'
+
