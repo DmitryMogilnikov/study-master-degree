@@ -1,5 +1,5 @@
 import numpy as np
-from Lab_2 import scalar_prod, norm_vector
+from Lab_02 import scalar_prod, norm_vector
 
 def auto_correlation(v1: np.ndarray, roll: int = -1) -> complex:
     result = np.zeros(len(v1), dtype=complex)
