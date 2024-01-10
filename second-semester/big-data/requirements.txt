@@ -1,0 +1,13 @@
+numpy
+ray
+pyspark
+dask
+mrjob
+flake8
+isort
+pandas
+matplotlib
+geopandas
+folium
+scikit-learn
+seaborn
